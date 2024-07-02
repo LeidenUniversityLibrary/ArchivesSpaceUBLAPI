@@ -101,6 +101,11 @@ if search_results['total_hits'] > 0:
 			search_results = client.get('repositories/2/search', params={'aq': json.dumps(makeJsonQuery(this_ead['uri'])) , 'type': ['archival_object'], 'page': pagenmbr +1, 'page_size': 250}).json()
 		#Doe je ding
 		for index in range(search_results['offset_last'] - search_results['offset_first']):
+			date_var = ''
+			odd_var = ''
+			subnotesvar = ''
+			extentsvar = ''
+			physdescvar = ''
 			my_record = json.loads(search_results['results'][index]['json'])
 			if my_record['jsonmodel_type'] != 'resource':
 				if (my_record['resource']['ref']) == this_ead['uri']:
@@ -114,20 +119,24 @@ if search_results['total_hits'] > 0:
 						worksheet.write(row, 3, my_record['title'])
 					if 'component_id' in my_record:
 						worksheet.write(row, 4, my_record['component_id'])
-					for a in range((len(my_record['extents']))):					
-						#Is een dict in een list, dus altijd eerst [0] anders wil hij een int!!
-						worksheet.write(row, 5, my_record['extents'][a-1]['extent_type'])
 					for a in range((len(my_record['dates']))):					
 						#Is een dict in een list, dus altijd eerst [0] anders wil hij een int!!
-						worksheet.write(row, 6, my_record['dates'][a-1]['expression'])
+						date_var = date_var + my_record['dates'][a-1]['expression'] + "^"
+					worksheet.write(row, 6, date_var[:-1])
 					for a in range((len(my_record['notes']))):
 						if 'subnotes' in my_record['notes'][a-1]:
 							if my_record['notes'][a-1]['type'] == 'odd':
 								for b in range((len(my_record['notes'][a-1]['subnotes']))):
-									worksheet.write(row, 7, my_record['notes'][a-1]['subnotes'][b-1]['content'])
+									odd_var = odd_var + my_record['notes'][a-1]['subnotes'][b-1]['content'] + "^"
 							if my_record['notes'][a-1]['type'] == 'scopecontent':
 								for b in range((len(my_record['notes'][a-1]['subnotes']))):
-									worksheet.write(row, 8, my_record['notes'][a-1]['subnotes'][b-1]['content'])
+									subnotesvar = subnotesvar + my_record['notes'][a-1]['subnotes'][b-1]['content'] + "^"
+						if my_record['notes'][a-1]['type'] == 'physdesc':
+							for b in range((len(my_record['notes'][a-1]['content']))):
+								physdescvar = physdescvar + my_record['notes'][a-1]['content'][b-1] + "^"
+					worksheet.write(row, 5, physdescvar[:-1])
+					worksheet.write(row, 7, odd_var[:-1])
+					worksheet.write(row, 8, subnotesvar[:-1])
 					row+=1
 
 workbook.close()
