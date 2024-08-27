@@ -8,6 +8,7 @@ import xlsxwriter
 import getopt
 import sys
 import os
+from getpass import getpass
 
 #Backward search voor velden die aan elkaar gekoppeld zijn. Momenteel zoekt naar Digital Objects die aan Archival Object zijn gekoppeld.
 def makeJsonQuery(fieldValue):
@@ -119,6 +120,7 @@ if search_results['total_hits'] > 0:
 						worksheet.write(row, 3, my_record['title'])
 					if 'component_id' in my_record:
 						worksheet.write(row, 4, my_record['component_id'])
+
 					for a in range((len(my_record['dates']))):					
 						#Is een dict in een list, dus altijd eerst [0] anders wil hij een int!!
 						date_var = date_var + my_record['dates'][a-1]['expression'] + "^"
@@ -131,9 +133,10 @@ if search_results['total_hits'] > 0:
 							if my_record['notes'][a-1]['type'] == 'scopecontent':
 								for b in range((len(my_record['notes'][a-1]['subnotes']))):
 									subnotesvar = subnotesvar + my_record['notes'][a-1]['subnotes'][b-1]['content'] + "^"
-						if my_record['notes'][a-1]['type'] == 'physdesc':
-							for b in range((len(my_record['notes'][a-1]['content']))):
-								physdescvar = physdescvar + my_record['notes'][a-1]['content'][b-1] + "^"
+						if 'type' in my_record['notes'][a-1]:
+							if my_record['notes'][a-1]['type'] == 'physdesc':
+								for b in range((len(my_record['notes'][a-1]['content']))):
+									physdescvar = physdescvar + my_record['notes'][a-1]['content'][b-1] + "^"
 					worksheet.write(row, 5, physdescvar[:-1])
 					worksheet.write(row, 7, odd_var[:-1])
 					worksheet.write(row, 8, subnotesvar[:-1])
