@@ -74,7 +74,7 @@ def makeExport(ubl_num, client):
 				#print("First page: " + str(search_results['first_page']) + " - Last page: " + str(search_results['last_page']) + " - This page: " + str(search_results['this_page']) + " - First item in set: " + str(search_results['offset_first']) + " - Last item in set: " + str(search_results['offset_last']))
 			print("Bezig met verwerken pagina " + str(search_results['this_page']) + " van " + str(search_results['last_page']) + ", item " + str(search_results['offset_first']) + " tot en met " + str(search_results['offset_last']))
 			#Doe je ding
-			for index in range(search_results['offset_last'] - search_results['offset_first']):
+			for index in range(search_results['offset_last'] - search_results['offset_first'] + 1):
 				date_var = ''
 				odd_var = ''
 				subnotesvar = ''
